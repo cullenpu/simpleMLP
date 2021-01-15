@@ -23,11 +23,9 @@ init_nn <- function(num_inputs, num_hidden_1, num_hidden_2, num_outputs) {
   return(model)
 }
 
-
 affine <- function(x, w, b) {
   return(x %>% w + b)
 }
-
 
 affine_back <- function(grad_y, x, w) {
   grad_x <- grad_y %*% t(w)
@@ -50,6 +48,17 @@ softmax <- function(x) {
   return(exp(x) / sum(x))
 }
 
+#' Forward propagation
+#'
+#' Runs a forward pass through the network.
+#'
+#' @param model list of all the weights
+#' @param x input to the network
+#'
+#' @return list of all intermediate values
+#' @export
+#'
+#' @examples
 forwardprop <- function(model, x) {
   z1 <- affine(x, model["w1"], model$get["b1"])
   h1 <- relu(z1)
@@ -60,10 +69,39 @@ forwardprop <- function(model, x) {
   return(forward_pass)
 }
 
+#' Backpropagation
+#'
+#' Runs a backwards pass through the network.
+#'
+#' @param model list of all the weights
+#' @param error gradients to the output of the network
+#' @param forward_pass intermediate values from the forward pass
+#'
+#' @return list of derivatives after the backwards pass
+#' @export
+#'
+#' @examples
 backprop <- function(model, error, forward_pass) {
-  affine1 <- affine_back(error, forward_pass["h2"], model["w3"])
-  relu1 <- relu_back(affine1["grad_x"], forward_pass["z2"])
-  affine2 <- affine_back(relu1, forward_pass["h1"], model["w2"])
-  relu2 <- relu_back(affine2["grad_x"], forward_pass["z1"])
-  affine3 <- affine_back(relu2, forward_pass["x"], model["w1"])
+  affine3 <- affine_back(error, forward_pass["h2"], model["w3"])
+  relu2 <- relu_back(affine3["grad_x"], forward_pass["z2"])
+
+  affine2 <- affine_back(relu2, forward_pass["h1"], model["w2"])
+  relu1 <- relu_back(affine2["grad_x"], forward_pass["z1"])
+
+  affine1 <- affine_back(relu1, forward_pass["x"], model["w1"])
+
+  back_pass <- list("dw1" = affine1["grad_w"], "db1" = affine1["grad_b"],
+                    "dw2" = affine2["grad_w"], "db2" = affine2["grad_b"],
+                    "dw3" = affine3["grad_w"], "db3" = affine3["grad_b"])
+  return(back_pass)
+}
+
+update <- function(model, back_pass, alpha) {
+  model["w1"] <- model["w1"] - alpha * back_pass["dw1"]
+  model["w2"] <- model["w2"] - alpha * back_pass["dw2"]
+  model["w3"] <- model["w3"] - alpha * back_pass["dw3"]
+
+  model["b1"] <- model["b1"] - alpha * back_pass["db1"]
+  model["b2"] <- model["b2"] - alpha * back_pass["db2"]
+  model["b3"] <- model["b3"] - alpha * back_pass["db3"]
 }
