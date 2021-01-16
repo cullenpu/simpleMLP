@@ -24,28 +24,47 @@ init_nn <- function(num_inputs, num_hidden_1, num_hidden_2, num_outputs) {
 }
 
 affine <- function(x, w, b) {
-  return(x %>% w + b)
+  # The function arguments must be matrix or vector format
+  x <- as.matrix(as.data.frame(x))
+  w <- as.matrix(as.data.frame(w))
+  b <- unlist(b)
+
+  y <- x %*% w
+  y <- y + b[col(y)]
+  return(y)
 }
 
 affine_back <- function(grad_y, x, w) {
+  # The function arguments must be matrix or vector format
+  grad_y <- as.matrix(as.data.frame(grad_y))
+  x <- as.matrix(as.data.frame(x))
+  w <- as.matrix(as.data.frame(w))
+
   grad_x <- grad_y %*% t(w)
   grad_w <- t(x) %*% grad_y
-  grad_b <- grad_y
+  grad_b <- rep(1, nrow(grad_y)) %*% grad_y
   return(list("grad_x" = grad_x, "grad_w" = grad_w, "grad_b" = grad_b))
 }
 
 relu <- function(x) {
-  return(pmax(x, rep(0, length(x))))
+  x <- as.matrix(as.data.frame(x))
+  x[x < 0] <- 0
+  return(x)
 }
 
 relu_back <- function(grad_y, x) {
+  grad_y <- as.matrix(as.data.frame(grad_y))
+  x <- as.matrix(as.data.frame(x))
+
   grad_x <- grad_y
-  grad_x[x <= 0] <- 0
+  grad_x[x < 0] <- 0
+  grad_x[x > 0] <- 1
   return(grad_x)
 }
 
 softmax <- function(x) {
-  return(exp(x) / sum(x))
+  x <- as.matrix(as.data.frame(x))
+  return(exp(x) / sum(exp(x)))
 }
 
 #' Forward propagation
@@ -60,11 +79,11 @@ softmax <- function(x) {
 #'
 #' @examples
 forwardprop <- function(model, x) {
-  z1 <- affine(x, model["w1"], model$get["b1"])
+  z1 <- affine(x, model["w1"], model["b1"])
   h1 <- relu(z1)
-  z2 <- affine(h1, model["w2"], model$get["b2"])
+  z2 <- affine(h1, model["w2"], model["b2"])
   h2 <- relu(z2)
-  y <- affine(h2, model["w3"], model$get["b3"])
+  y <- affine(h2, model["w3"], model["b3"])
   forward_pass <- list("x" = x, "z1" = z1, "h1" = h1, "z2" = z2, "h2" = h2, "y" = y)
   return(forward_pass)
 }
@@ -83,12 +102,12 @@ forwardprop <- function(model, x) {
 #' @examples
 backprop <- function(model, error, forward_pass) {
   affine3 <- affine_back(error, forward_pass["h2"], model["w3"])
-  relu2 <- relu_back(affine3["grad_x"], forward_pass["z2"])
+  grad_z2 <- relu_back(affine3["grad_x"], forward_pass["z2"])
 
-  affine2 <- affine_back(relu2, forward_pass["h1"], model["w2"])
-  relu1 <- relu_back(affine2["grad_x"], forward_pass["z1"])
+  affine2 <- affine_back(grad_z2, forward_pass["h1"], model["w2"])
+  grad_z1 <- relu_back(affine2["grad_x"], forward_pass["z1"])
 
-  affine1 <- affine_back(relu1, forward_pass["x"], model["w1"])
+  affine1 <- affine_back(grad_z1, forward_pass["x"], model["w1"])
 
   back_pass <- list("dw1" = affine1["grad_w"], "db1" = affine1["grad_b"],
                     "dw2" = affine2["grad_w"], "db2" = affine2["grad_b"],
@@ -97,11 +116,14 @@ backprop <- function(model, error, forward_pass) {
 }
 
 update <- function(model, back_pass, alpha) {
-  model["w1"] <- model["w1"] - alpha * back_pass["dw1"]
-  model["w2"] <- model["w2"] - alpha * back_pass["dw2"]
-  model["w3"] <- model["w3"] - alpha * back_pass["dw3"]
+  update_model <- list(
+    "w1" = as.matrix(as.data.frame(model["w1"])) - alpha * as.matrix(as.data.frame(back_pass["dw1"])),
+    "w2" = as.matrix(as.data.frame(model["w2"])) - alpha * as.matrix(as.data.frame(back_pass["dw2"])),
+    "w3" = as.matrix(as.data.frame(model["w3"])) - alpha * as.matrix(as.data.frame(back_pass["dw3"])),
 
-  model["b1"] <- model["b1"] - alpha * back_pass["db1"]
-  model["b2"] <- model["b2"] - alpha * back_pass["db2"]
-  model["b3"] <- model["b3"] - alpha * back_pass["db3"]
+    "b1" = unlist(model["b1"]) - alpha * unlist(back_pass["db1"]),
+    "b2" = unlist(model["b2"]) - alpha * unlist(back_pass["db2"]),
+    "b3" = unlist(model["b3"]) - alpha * unlist(back_pass["db3"])
+  )
+  return (update_model)
 }
