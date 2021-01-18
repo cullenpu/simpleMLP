@@ -1,4 +1,20 @@
-train <- function(train_set, target_set, model, alpha, epochs, batch_size=nrow(train_set)) {
+#' Train Network
+#'
+#' Train the network with specified hyperparameters.
+#'
+#' @param train_set set of training data
+#' @param target_set set of targets in one-hot encoded form
+#' @param model list of weights and biases
+#' @param alpha learning rate
+#' @param epochs number of epochs
+#' @param batch_size mini-batch size
+#'
+#' @return list of weights and biases after training
+#' @export
+#'
+#' @examples
+#' train_nn(train, target, model, 0.01, 100, 25)
+train_nn <- function(train_set, target_set, model, alpha, epochs, batch_size=nrow(train_set)) {
   n <- nrow(train_set)
   num_iter <- n %/% batch_size
 
