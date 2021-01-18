@@ -13,9 +13,9 @@
 #'
 #' @examples
 init_nn <- function(num_inputs, num_hidden_1, num_hidden_2, num_outputs) {
-  w1 <- matrix(rnorm(num_inputs * num_hidden_1, 0, 1 / num_inputs), nrow=num_inputs)
-  w2 <- matrix(rnorm(num_hidden_1 * num_hidden_2, 0, 1 / num_hidden_1), nrow=num_hidden_1)
-  w3 <- matrix(rnorm(num_hidden_2 * num_outputs, 0, 1 / num_hidden_2), nrow=num_hidden_2)
+  w1 <- matrix(stats::rnorm(num_inputs * num_hidden_1, 0, 1 / num_inputs), nrow=num_inputs)
+  w2 <- matrix(stats::rnorm(num_hidden_1 * num_hidden_2, 0, 1 / num_hidden_1), nrow=num_hidden_1)
+  w3 <- matrix(stats::rnorm(num_hidden_2 * num_outputs, 0, 1 / num_hidden_2), nrow=num_hidden_2)
   b1 <- rep(0, num_hidden_1)
   b2 <- rep(0, num_hidden_2)
   b3 <- rep(0, num_outputs)
@@ -58,13 +58,13 @@ relu_back <- function(grad_y, x) {
 
   grad_x <- grad_y
   grad_x[x < 0] <- 0
-  grad_x[x > 0] <- 1
   return(grad_x)
 }
 
-softmax <- function(x) {
-  x <- as.matrix(as.data.frame(x))
-  return(exp(x) / sum(exp(x)))
+softmax <- function(y) {
+  y <- as.matrix(as.data.frame(y))
+  prediction <- exp(y) / apply(y, 1, function(x) sum(exp(x)))
+  return(prediction)
 }
 
 #' Forward propagation
@@ -75,7 +75,6 @@ softmax <- function(x) {
 #' @param x input to the network
 #'
 #' @return list of all intermediate values
-#' @export
 #'
 #' @examples
 forwardprop <- function(model, x) {
@@ -97,7 +96,6 @@ forwardprop <- function(model, x) {
 #' @param forward_pass intermediate values from the forward pass
 #'
 #' @return list of derivatives after the backwards pass
-#' @export
 #'
 #' @examples
 backprop <- function(model, error, forward_pass) {
