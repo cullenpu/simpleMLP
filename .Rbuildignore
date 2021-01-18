@@ -1,3 +1,5 @@
 ^simpleMLP\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^nn-mnist\.R$
+^README\.Rmd$

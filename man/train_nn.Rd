@@ -33,5 +33,7 @@ list of weights and biases after training
 Train the network with specified hyperparameters.
 }
 \examples{
+\dontrun{
 train_nn(train, target, model, 0.01, 100, 25)
+}
 }

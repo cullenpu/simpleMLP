@@ -13,7 +13,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' train_nn(train, target, model, 0.01, 100, 25)
+#' }
 train_nn <- function(train_set, target_set, model, alpha, epochs, batch_size=nrow(train_set)) {
   n <- nrow(train_set)
   num_iter <- n %/% batch_size
