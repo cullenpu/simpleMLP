@@ -4,3 +4,4 @@
 ^nn-mnist\.R$
 ^README\.Rmd$
 ^cran-comments\.md$
+^CRAN-RELEASE$

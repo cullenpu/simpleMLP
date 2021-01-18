@@ -1,3 +1,9 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+- Added a `inst/WORDLIST`
+- Commented out a function used for testing the model; this function used a function from a different package which was not imported
+
 ## Test environments
 * ubuntu 10.04.1 (JupyterHub), R 4.0.3
 * local windows install, R 4.0.3
