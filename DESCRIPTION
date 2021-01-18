@@ -1,16 +1,17 @@
 Package: simpleMLP
-Title: What the Package Does (One Line, Title Case)
+Title: Simple Multilayer Perceptron Neural Network
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Cullen",
+           family = "Pu",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "cullenpu@gmail.com")
+Description: Create, and train a multilayer perceptron, a type of feedforward, 
+    fully connected neural network. Features 2 ReLU hidden layers.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: 
+    stats

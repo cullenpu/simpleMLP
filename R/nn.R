@@ -12,6 +12,7 @@
 #' @export
 #'
 #' @examples
+#' init_nn(1000, 100, 50, 10)
 init_nn <- function(num_inputs, num_hidden_1, num_hidden_2, num_outputs) {
   w1 <- matrix(stats::rnorm(num_inputs * num_hidden_1, 0, 1 / num_inputs), nrow=num_inputs)
   w2 <- matrix(stats::rnorm(num_hidden_1 * num_hidden_2, 0, 1 / num_hidden_1), nrow=num_hidden_1)
@@ -71,12 +72,10 @@ softmax <- function(y) {
 #'
 #' Runs a forward pass through the network.
 #'
-#' @param model list of all the weights
+#' @param model list of all the weights and biases
 #' @param x input to the network
 #'
 #' @return list of all intermediate values
-#'
-#' @examples
 forwardprop <- function(model, x) {
   z1 <- affine(x, model["w1"], model["b1"])
   h1 <- relu(z1)
@@ -91,13 +90,11 @@ forwardprop <- function(model, x) {
 #'
 #' Runs a backwards pass through the network.
 #'
-#' @param model list of all the weights
+#' @param model list of all the weights and biases
 #' @param error gradients to the output of the network
 #' @param forward_pass intermediate values from the forward pass
 #'
 #' @return list of derivatives after the backwards pass
-#'
-#' @examples
 backprop <- function(model, error, forward_pass) {
   affine3 <- affine_back(error, forward_pass["h2"], model["w3"])
   grad_z2 <- relu_back(affine3["grad_x"], forward_pass["z2"])
@@ -113,6 +110,15 @@ backprop <- function(model, error, forward_pass) {
   return(back_pass)
 }
 
+#' Update Model
+#'
+#' Updates the model using derivatives from a backward pass.
+#'
+#' @param model list of all the weights and biases
+#' @param back_pass derivatives from a backwards pass through the network
+#' @param alpha learning rate
+#'
+#' @return updated list of the weights and biases
 update <- function(model, back_pass, alpha) {
   update_model <- list(
     "w1" = as.matrix(as.data.frame(model["w1"])) - alpha * as.matrix(as.data.frame(back_pass["dw1"])),
