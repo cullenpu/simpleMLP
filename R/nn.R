@@ -1,7 +1,8 @@
 #' Initialize network
 #'
-#' Initialize 3 layer fully connected neural network, also known as multilayer perceptron,
-#' setting biases to 0 and using the Xavier initialization method for weights.
+#' Initialize 3 layer fully connected neural network, also known as multilayer
+#' perceptron, setting biases to 0 and using the Xavier initialization method
+#' for weights.
 #'
 #' @param num_inputs dimension of inputs
 #' @param num_hidden_1 dimension of first hidden layer

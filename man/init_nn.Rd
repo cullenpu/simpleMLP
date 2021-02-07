@@ -19,8 +19,9 @@ init_nn(num_inputs, num_hidden_1, num_hidden_2, num_outputs)
 list containing weight and bias matrices in each layer of the network
 }
 \description{
-Initialize 3 layer fully connected neural network, also known as multilayer perceptron,
-setting biases to 0 and using the Xavier initialization method for weights.
+Initialize 3 layer fully connected neural network, also known as multilayer
+perceptron, setting biases to 0 and using the Xavier initialization method
+for weights.
 }
 \examples{
 init_nn(1000, 100, 50, 10)

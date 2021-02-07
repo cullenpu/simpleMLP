@@ -5,18 +5,18 @@
 \title{Train Network}
 \usage{
 train_nn(
-  train_set,
-  target_set,
+  train_data,
+  train_target,
   model,
   alpha,
   epochs,
-  batch_size = nrow(train_set)
+  batch_size = nrow(train_data)
 )
 }
 \arguments{
-\item{train_set}{set of training data}
+\item{train_data}{set of training data}
 
-\item{target_set}{set of targets in one-hot encoded form}
+\item{train_target}{set of targets in one-hot encoded form}
 
 \item{model}{list of weights and biases}
 
@@ -34,6 +34,10 @@ Train the network with specified hyperparameters.
 }
 \examples{
 \dontrun{
-train_nn(train, target, model, 0.01, 100, 25)
+model <- init_nn(784, 100, 50, 10)
+mnist_train <- load_mnist_train()
+train_data <- mnist_train[1]
+train_target <- mnist_train[2]
+train_nn(train_data, train_target, model, 0.01, 1, 10)
 }
 }

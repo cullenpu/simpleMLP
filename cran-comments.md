@@ -1,19 +1,13 @@
 ## Resubmission
 This is a resubmission. In this version I have:
 
-- Added a `inst/WORDLIST`
-- Commented out a function used for testing the model; this function used a function from a different package which was not imported
+- Added a function used to load a dataset for training
+- Updated the train_nn function with a more thorough example
+- Kept the train_nn example wrapped with \dontrun{} because using \donttest{} will cause an error when running R CMD check as it takes well over a minute to run
 
 ## Test environments
 * ubuntu 10.04.1 (JupyterHub), R 4.0.3
 * local windows install, R 4.0.3
 
 ## R CMD check results
-There were no ERRORs or WARNINGs. 
-
-There was 1 NOTE:
-
-- checking R code for possible problems ... NOTE
-  load_mnist: no visible global function definition for ‘read_csv’
-
-  load_mnist is used for testing and is not included in the build
+There were no ERRORs, WARNINGs, or NOTEs.
