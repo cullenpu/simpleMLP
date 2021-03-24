@@ -1,35 +1,46 @@
 #' Load Training Data
 #'
-#' Loads MNIST training and validation data and generates one hot encodings
-#' for the targets.
+#' Loads MNIST training, validation, and test data and generates one hot
+#' encodings for the targets. The test set proportion is not specified and is
+#' instead the remainder from the test and validation proportions.
 #'
-#' @param train_prop the proportion of the data used for training data; the
-#' remaining will be used for validation
+#' @param train_prop proportion of the data used for the training set
+#' @param validate_prop proportion of the data used for the validation set
 #'
 #' @return list of training and validation data and targets
 #' @export
 #'
 #' @examples
 #' \donttest{
-#' mnist_train <- load_mnist_train()
-#' train_data <- mnist_train[1]
-#' train_target <- mnist_train[2]
-#' validate_data <- mnist_train[3]
-#' validate_target <- mnist_train[4]
+#' mnist <- load_mnist(0.8, 0.1)
+#' train_data <- mnist[1]
+#' train_target <- mnist[2]
+#' validate_data <- mnist[3]
+#' validate_target <- mnist[4]
+#' test_data <- mnist[5]
+#' test_target <- mnist[6]
 #' }
-load_mnist_train <- function(train_prop=0.7) {
-  if (train_prop < 0 || train_prop > 1) {
-    return("Error: Train data proportion must be between 0 and 1")
+load_mnist <- function(train_prop=0.8, validate_prop=0.1) {
+  if (
+    train_prop < 0 ||
+    train_prop > 1 ||
+    validate_prop < 0 ||
+    validate_prop > 1 ||
+    train_prop + validate_prop > 1
+  ) {
+    return("Error: Train and validation data proportion must be between 0 and 1")
   }
-  mnist_train <- readr::read_csv("https://pjreddie.com/media/files/mnist_train.csv", col_names = FALSE)
-  mnist_train <- sample(mnist_train)  # shuffle raw data
+  mnist <- readr::read_csv("https://pjreddie.com/media/files/mnist_train.csv", col_names = FALSE)
+  mnist <- sample(mnist)  # shuffle raw data
 
   # index to split training and validation
-  train_index <- train_prop * nrow(mnist_train)
+  train_index <- train_prop * nrow(mnist)
+  validate_index <- validate_prop * nrow(mnist)
 
   # split raw data into train and validate sets
-  train_raw <- mnist_train[1:train_index,]
-  validate_raw <- mnist_train[train_index:nrow(mnist_train),]
+  train_raw <- mnist[1:train_index,]
+  validate_raw <- mnist[train_index:validate_index,]
+  test_raw <- mnist[validate_index:nrow(mnist),]
 
   # training data and targets
   train_data <- train_raw[,-1]
@@ -39,29 +50,11 @@ load_mnist_train <- function(train_prop=0.7) {
   validate_data <- validate_raw[,-1]
   validate_target <- one_hot_encoding(validate_raw)
 
-  return(list(train_data, train_target, validate_data, validate_target))
-}
+  # test data and targets
+  test_data <- test_raw[,-1]
+  test_target <- one_hot_encoding(test_raw)
 
-#' Load Testing Data
-#'
-#' Loads MNIST testing data and generates one hot encodings for the targets.
-#'
-#' @return list of testing data and targets
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' mnist_test <- load_mnist_test()
-#' test_data <- mnist_test[1]
-#' test_target <- mnist_test[2]
-#' }
-load_mnist_test <- function() {
-  mnist_test <- readr::read_csv("https://pjreddie.com/media/files/mnist_test.csv", col_names = FALSE)
-
-  test_data <- mnist_test[,-1]
-  test_target <- one_hot_encoding(mnist_test)
-
-  return(list(test_data, test_target))
+  return(list(train_data, train_target, validate_data, validate_target, test_data, test_target))
 }
 
 #' One Hot Encoding

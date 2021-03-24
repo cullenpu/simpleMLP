@@ -7,16 +7,23 @@
 train_nn(
   train_data,
   train_target,
+  validate_data,
+  validate_target,
   model,
   alpha,
   epochs,
-  batch_size = nrow(train_data)
+  batch_size = nrow(train_data),
+  plot_acc = TRUE
 )
 }
 \arguments{
 \item{train_data}{set of training data}
 
-\item{train_target}{set of targets in one-hot encoded form}
+\item{train_target}{set of training data targets in one-hot encoded form}
+
+\item{validate_data}{set of validation data targets in one-hot encoded form}
+
+\item{validate_target}{set of targets in}
 
 \item{model}{list of weights and biases}
 
@@ -25,19 +32,25 @@ train_nn(
 \item{epochs}{number of epochs}
 
 \item{batch_size}{mini-batch size}
+
+\item{plot_acc}{whether or not to plot training and validation accuracy}
 }
 \value{
 list of weights and biases after training
 }
 \description{
-Train the network with specified hyperparameters.
+Train the network with specified hyperparameters and return the trained
+model.
 }
 \examples{
 \dontrun{
-model <- init_nn(784, 100, 50, 10)
-mnist_train <- load_mnist_train()
-train_data <- mnist_train[1]
-train_target <- mnist_train[2]
-train_nn(train_data, train_target, model, 0.01, 1, 10)
+mlp_model <- init_nn(784, 100, 50, 10)
+mnist <- load_mnist()
+train_data <- mnist[1]
+train_target <- mnist[2]
+validate_data <- mnist[3]
+validate_target <- mnist[4]
+mlp_model <- train_nn(train_data, train_target, validate_data,
+validate_target, mlp_model, 0.01, 1, 64)
 }
 }

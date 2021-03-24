@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-#' init_nn(1000, 100, 50, 10)
+#' mlp_model <- init_nn(784, 100, 50, 10)
 init_nn <- function(num_inputs, num_hidden_1, num_hidden_2, num_outputs) {
   w1 <- matrix(stats::rnorm(num_inputs * num_hidden_1, 0, 1 / num_inputs), nrow=num_inputs)
   w2 <- matrix(stats::rnorm(num_hidden_1 * num_hidden_2, 0, 1 / num_hidden_1), nrow=num_hidden_1)

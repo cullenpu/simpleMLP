@@ -4,13 +4,13 @@
 # simpleMLP
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-simpleMLP is an implementation of a multilayer perceptron, a type of
-feedforward, fully connected neural network. It features 2 ReLU hidden
-layers and supports hyperparameter tuning for learning rate, batch size,
-epochs, and hidden units for both layers.
+[simpleMLP](https://CRAN.R-project.org/package=simpleMLP) is an
+implementation of a multilayer perceptron, a type of feedforward, fully
+connected neural network. It features 2 ReLU hidden layers and supports
+hyperparameter tuning for learning rate, batch size, epochs, and hidden
+units for both layers.
 
 simpleMLP also allows you to directly load the MNIST database of
 handwritten digits to quickly start training models.
@@ -43,9 +43,9 @@ combinations of hyperparameters to observe how they affect overfitting
 and underfitting. For more information, the following resources might be
 helpful:
 
-  - Ian Goodfellow, Yoshua Bengio, & Aaron Courville (2016). Deep
+-   Ian Goodfellow, Yoshua Bengio, & Aaron Courville (2016). Deep
     Learning. MIT Press.
-  - [Coursera Machine
+-   [Coursera Machine
     Learning](https://www.coursera.org/learn/machine-learning)
 
 ## Installation
@@ -74,23 +74,42 @@ To load the MNIST database, run the following:
 ``` r
 library(simpleMLP)
 
-mnist_train <- load_mnist_train()
-train_data <- mnist_train[1]
-train_target <- mnist_train[2]
+mnist <- load_mnist()
+
+train_data <- mnist[1]
+train_target <- mnist[2]
+
+validate_data <- mnist[3]
+validate_target <- mnist[4]
+
+test_data <- mnist[5]
+test_target <- mnist[6]
 ```
 
 After loading the dataset, the model can be trained like so:
 
 ``` r
-# Initialize the network model. The data has dimension 784, there are 
+# Initialize the network model. The data has dimension 784, there are
 # 10 classes, and we choose 100 and 50 hidden units for the first and second
 # hidden layers.
 mlp_model <- init_nn(784, 100, 50, 10)
 
 # Now we train the model. We decide on the following hyperparameters. Overall,
-# the hyperparameters should be tuned as to avoid overfitting.
+# the hyperparameters should be tuned as to avoid overfitting. We also plot the
+# test cross entropy and accuracy to see how it changes over time.
 alpha <- 0.01
-epochs <- 10
-batch_size <- 32
-train_nn(train_data, train_target, mlp_model, alpha, epochs, batch_size)
+epochs <- 1
+batch_size <- 64
+plot_acc <- TRUE
+
+mlp_model <- train_nn(train_data, train_target, validate_data, validate_target,
+                      mlp_model, alpha, epochs, batch_size, plot_acc)
+
+# To see how well the model performs, we evaluate it on the test data.
+evaluate(test_data, test_target, mlp_model)
 ```
+
+Using the given hyperparameters, a final test accuracy of `0.955723` was
+achieved, with the accuracy plot shown below.
+
+![Accuracy Plot](examples/example_plot.png)

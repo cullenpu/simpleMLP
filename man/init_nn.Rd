@@ -24,5 +24,5 @@ perceptron, setting biases to 0 and using the Xavier initialization method
 for weights.
 }
 \examples{
-init_nn(1000, 100, 50, 10)
+mlp_model <- init_nn(784, 100, 50, 10)
 }
